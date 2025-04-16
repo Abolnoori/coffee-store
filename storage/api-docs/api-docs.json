@@ -1,10 +1,1149 @@
 {
     "openapi": "3.0.0",
     "info": {
-        "title": "Anophel API Documentation",
-        "version": "0.0.0"
+        "title": "Coffee Website API Documentation",
+        "version": "1.0.0"
     },
     "paths": {
-        "/api/v1": {}
-    }
+        "/api/v1": {},
+        "/api/v1/cart/{id}": {
+            "get": {
+                "tags": [
+                    "Cart"
+                ],
+                "summary": "نمایش سبد خرید یک کاربر",
+                "description": "نمایش آیتم‌ها و محصولات موجود در سبد خرید بر اساس آیدی کاربر",
+                "operationId": "7281202a117e3e9c5957e17acb401141",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "آیدی کاربر",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 5
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "نمایش سبد خرید یا پیام خالی بودن آن",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "oneOf": [
+                                        {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 3
+                                                },
+                                                "user_id": {
+                                                    "type": "integer",
+                                                    "example": 5
+                                                },
+                                                "items": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "product": {
+                                                                "properties": {
+                                                                    "id": {
+                                                                        "type": "integer",
+                                                                        "example": 10
+                                                                    },
+                                                                    "name": {
+                                                                        "type": "string",
+                                                                        "example": "گوشی سامسونگ A73"
+                                                                    },
+                                                                    "price": {
+                                                                        "type": "number",
+                                                                        "format": "float",
+                                                                        "example": 14500000
+                                                                    },
+                                                                    "image": {
+                                                                        "type": "string",
+                                                                        "example": "a73.jpg"
+                                                                    }
+                                                                },
+                                                                "type": "object"
+                                                            },
+                                                            "quantity": {
+                                                                "type": "integer",
+                                                                "example": 2
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        {
+                                            "properties": {
+                                                "message": {
+                                                    "type": "string",
+                                                    "example": "سبد خرید شما خالی است."
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/cart/add": {
+            "post": {
+                "tags": [
+                    "Cart"
+                ],
+                "summary": "افزودن محصول به سبد خرید کاربر",
+                "description": "اگر محصول قبلاً داخل سبد بوده، فقط تعدادش افزایش می‌یابد. در غیر این صورت، محصول جدید به سبد اضافه می‌شود.",
+                "operationId": "00b66d86de1d25d51dd2bc104d5116aa",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "userid",
+                                    "productid",
+                                    "quantity"
+                                ],
+                                "properties": {
+                                    "userid": {
+                                        "description": "آیدی کاربر",
+                                        "type": "integer",
+                                        "example": 3
+                                    },
+                                    "productid": {
+                                        "description": "آیدی محصول",
+                                        "type": "integer",
+                                        "example": 12
+                                    },
+                                    "quantity": {
+                                        "description": "تعداد",
+                                        "type": "integer",
+                                        "example": 2
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "محصول با موفقیت به سبد خرید اضافه شد",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Product added to cart"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "خطای اعتبارسنجی",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "errors": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/cart/remove/{userid}/{productid}/{quantity}": {
+            "delete": {
+                "tags": [
+                    "Cart"
+                ],
+                "summary": "حذف یا کاهش تعداد یک محصول از سبد خرید کاربر",
+                "description": "اگر تعداد جدید صفر یا کمتر باشد، محصول از سبد خرید حذف می‌شود. در غیر این صورت فقط مقدار آن کاهش می‌یابد.",
+                "operationId": "aabfa069eac80f2e1baca1ff04abce7e",
+                "parameters": [
+                    {
+                        "name": "userid",
+                        "in": "path",
+                        "description": "آیدی کاربر",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 3
+                        }
+                    },
+                    {
+                        "name": "productid",
+                        "in": "path",
+                        "description": "آیدی محصولی که باید از سبد خرید حذف یا کم شود",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 12
+                        }
+                    },
+                    {
+                        "name": "quantity",
+                        "in": "path",
+                        "description": "تعداد برای کم‌کردن (مثبت یا منفی). اگر نتیجه نهایی صفر یا کمتر شود، آیتم حذف می‌شود.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": -1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "محصول حذف شد یا تعداد به‌روزرسانی شد",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "oneOf": [
+                                        {
+                                            "properties": {
+                                                "message": {
+                                                    "type": "string",
+                                                    "example": "محصول از سبد خرید حذف شد"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        {
+                                            "properties": {
+                                                "message": {
+                                                    "type": "string",
+                                                    "example": "تعداد به‌روزرسانی شد"
+                                                },
+                                                "quantity": {
+                                                    "type": "integer",
+                                                    "example": 2
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "مقدار وارد شده معتبر نیست",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "تعداد وارد شده معتبر نیست"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "دسترسی غیرمجاز به آیتم",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "دسترسی غیرمجاز"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "آیتم مورد نظر یافت نشد",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "محصول مورد نظر در سبد خرید پیدا نشد"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "خطای ناشناخته",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "یک خطای ناشناخته رخ داد"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/contact": {
+            "get": {
+                "tags": [
+                    "Contact"
+                ],
+                "summary": "دریافت لیست تمام پیام‌های ارسال‌شده از فرم تماس با ما",
+                "operationId": "75f95449d494e255ac01fcbe47ad63ec",
+                "responses": {
+                    "200": {
+                        "description": "لیست پیام‌های ارسال‌شده",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "integer",
+                                                "example": 1
+                                            },
+                                            "name": {
+                                                "type": "string",
+                                                "example": "حسین علیزاده"
+                                            },
+                                            "email": {
+                                                "type": "string",
+                                                "example": "hossain@example.com"
+                                            },
+                                            "subject": {
+                                                "type": "string",
+                                                "example": "پرسش در مورد محصول"
+                                            },
+                                            "message": {
+                                                "type": "string",
+                                                "example": "لطفا اطلاعات بیشتری در مورد این محصول بدهید."
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Contact"
+                ],
+                "summary": "ارسال پیام از طریق فرم تماس با ما",
+                "operationId": "bf88ca61bdce88425a87cecb7ccda278",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "email",
+                                    "subject",
+                                    "message"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "حسین علیزاده"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "hossain@example.com"
+                                    },
+                                    "subject": {
+                                        "type": "string",
+                                        "example": "پرسش در مورد محصول"
+                                    },
+                                    "message": {
+                                        "type": "string",
+                                        "example": "لطفا اطلاعات بیشتری در مورد این محصول بدهید."
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "پیام با موفقیت ارسال شد",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "Send Message": {
+                                            "properties": {
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "حسین علیزاده"
+                                                },
+                                                "email": {
+                                                    "type": "string",
+                                                    "example": "hossain@example.com"
+                                                },
+                                                "subject": {
+                                                    "type": "string",
+                                                    "example": "پرسش در مورد محصول"
+                                                },
+                                                "message": {
+                                                    "type": "string",
+                                                    "example": "لطفا اطلاعات بیشتری در مورد این محصول بدهید."
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "خطا در اعتبارسنجی",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "errors": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/articles": {
+            "get": {
+                "tags": [
+                    "Articles"
+                ],
+                "summary": "دریافت لیست تمام مقالات",
+                "operationId": "4f9a20db01881726176c8e9f0712b8ed",
+                "responses": {
+                    "200": {
+                        "description": "لیست مقالات",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "integer",
+                                                "example": 1
+                                            },
+                                            "title": {
+                                                "type": "string",
+                                                "example": "عنوان مقاله"
+                                            },
+                                            "description": {
+                                                "type": "string",
+                                                "example": "توضیحاتی درباره مقاله"
+                                            },
+                                            "image": {
+                                                "type": "string",
+                                                "example": "article-image.jpg"
+                                            },
+                                            "category_id": {
+                                                "type": "integer",
+                                                "example": 2
+                                            },
+                                            "updated_at": {
+                                                "type": "string",
+                                                "format": "date-time",
+                                                "example": "2025-04-15T12:00:00Z"
+                                            },
+                                            "created_at": {
+                                                "type": "string",
+                                                "format": "date-time",
+                                                "example": "2025-04-14T12:00:00Z"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/login": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "ورود به حساب کاربری با ایمیل یا نام کاربری",
+                "operationId": "2bd778ac594b753b1466d635caf32e28",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "login",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "login": {
+                                        "type": "string",
+                                        "example": "testuser یا test@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "12345678"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "ورود موفق",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "string",
+                                            "example": "ورود به حساب با موفقیت انجام شد."
+                                        },
+                                        "Token": {
+                                            "type": "string",
+                                            "example": "X8s9dk3l91kdfhTgH9aKaPd0zL"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "خطای اعتبارسنجی",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "errors": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "442": {
+                        "description": "کاربر پیدا نشد یا رمز اشتباه است",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "Eror"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "کاربر مورد نظر یافت نشد."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/products": {
+            "get": {
+                "tags": [
+                    "Products"
+                ],
+                "summary": "دریافت لیست همه محصولات",
+                "operationId": "7ca3593d05653d957ae7be1ac648ca44",
+                "responses": {
+                    "200": {
+                        "description": "لیست محصولات",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "integer",
+                                                "example": 1
+                                            },
+                                            "name": {
+                                                "type": "string",
+                                                "example": "آیفون 14"
+                                            },
+                                            "description": {
+                                                "type": "string",
+                                                "example": "آخرین مدل آیفون اپل"
+                                            },
+                                            "price": {
+                                                "type": "number",
+                                                "format": "float",
+                                                "example": 999.99
+                                            },
+                                            "discount": {
+                                                "type": "number",
+                                                "format": "float",
+                                                "example": 10
+                                            },
+                                            "image": {
+                                                "type": "string",
+                                                "example": "iphone14.jpg"
+                                            },
+                                            "category_id": {
+                                                "type": "integer",
+                                                "example": 2
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/products/category/{category_id}": {
+            "get": {
+                "tags": [
+                    "Products"
+                ],
+                "summary": "دریافت محصولات بر اساس دسته‌بندی",
+                "operationId": "770934ff9827007f1b5cbc1c7d3f74ff",
+                "parameters": [
+                    {
+                        "name": "category_id",
+                        "in": "path",
+                        "description": "آیدی دسته‌بندی محصول",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 3
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "لیست محصولات این دسته‌بندی",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "integer",
+                                                "example": 5
+                                            },
+                                            "name": {
+                                                "type": "string",
+                                                "example": "مانیتور سامسونگ"
+                                            },
+                                            "description": {
+                                                "type": "string",
+                                                "example": "مانیتور ۲۷ اینچ 4K"
+                                            },
+                                            "price": {
+                                                "type": "number",
+                                                "format": "float",
+                                                "example": 4200000
+                                            },
+                                            "discount": {
+                                                "type": "number",
+                                                "format": "float",
+                                                "example": 15
+                                            },
+                                            "image": {
+                                                "type": "string",
+                                                "example": "monitor.jpg"
+                                            },
+                                            "category_id": {
+                                                "type": "integer",
+                                                "example": 3
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/products/{id}": {
+            "get": {
+                "tags": [
+                    "Products"
+                ],
+                "summary": "دریافت محصول بر اساس آیدی",
+                "operationId": "1948ab0c6b14a722ad6d1665cd38e1f1",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "آیدی محصول",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 10
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "اطلاعات محصول",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "integer",
+                                                "example": 10
+                                            },
+                                            "name": {
+                                                "type": "string",
+                                                "example": "هدفون بی‌سیم"
+                                            },
+                                            "description": {
+                                                "type": "string",
+                                                "example": "هدفون نویز کنسلینگ حرفه‌ای"
+                                            },
+                                            "price": {
+                                                "type": "number",
+                                                "format": "float",
+                                                "example": 1490000
+                                            },
+                                            "discount": {
+                                                "type": "number",
+                                                "format": "float",
+                                                "example": 5
+                                            },
+                                            "image": {
+                                                "type": "string",
+                                                "example": "headphone.jpg"
+                                            },
+                                            "category_id": {
+                                                "type": "integer",
+                                                "example": 4
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "محصول پیدا نشد"
+                    }
+                }
+            }
+        },
+        "/api/v1/users": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "گرفتن تمامی کاربران",
+                "operationId": "3ab81e3f9b24b4f36ab08d72349ac632",
+                "responses": {
+                    "200": {
+                        "description": "List of Users"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "ساخت کاربر جدید",
+                "operationId": "ba548b97148bb5c0d8cab3bc3f128bfd",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "username",
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "username": {
+                                        "type": "string",
+                                        "example": "john_doe"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "john@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "12345678"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "User created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "Create By User": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "username": {
+                                                    "type": "string",
+                                                    "example": "john_doe"
+                                                },
+                                                "email": {
+                                                    "type": "string",
+                                                    "example": "john@example.com"
+                                                },
+                                                "remember_token": {
+                                                    "type": "string",
+                                                    "example": "a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation errors",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "errors": {
+                                            "properties": {
+                                                "username": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "email": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "password": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/users/{id}": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "گرفتن یوزر با آیدی",
+                "operationId": "daaf7a6169ee9348c3fddb07778598ff",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the user",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "integer",
+                                                "example": 1
+                                            },
+                                            "username": {
+                                                "type": "string",
+                                                "example": "john_doe"
+                                            },
+                                            "email": {
+                                                "type": "string",
+                                                "example": "john@example.com"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "User not found"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "آپدیت دیتای یوزر",
+                "operationId": "59e98fba99e974815e27979dd58e2175",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the user to update",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "username",
+                                    "email"
+                                ],
+                                "properties": {
+                                    "username": {
+                                        "type": "string",
+                                        "example": "new_username"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "new_email@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "newpassword123",
+                                        "nullable": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "User updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "username": {
+                                            "type": "string",
+                                            "example": "new_username"
+                                        },
+                                        "email": {
+                                            "type": "string",
+                                            "example": "new_email@example.com"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation errors",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "errors": {
+                                            "properties": {
+                                                "username": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "email": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "password": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "حذف اکانت یوزر با آیدی  ",
+                "operationId": "c30c64b8b7730b65c7714c9af4a6f5fa",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the user to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User deleted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "delete": {
+                                            "type": "string",
+                                            "example": "Deleted is successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "User not found"
+                    }
+                }
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Cart",
+            "description": "Cart"
+        },
+        {
+            "name": "Contact",
+            "description": "Contact"
+        },
+        {
+            "name": "Articles",
+            "description": "Articles"
+        },
+        {
+            "name": "Auth",
+            "description": "Auth"
+        },
+        {
+            "name": "Products",
+            "description": "Products"
+        },
+        {
+            "name": "Users",
+            "description": "Users"
+        }
+    ]
 }

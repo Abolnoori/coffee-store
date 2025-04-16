@@ -10,6 +10,47 @@ use Illuminate\Support\Facades\Validator;
 class LoginController extends Controller
 {
 
+/**
+ * @OA\Post(
+ *     path="/api/v1/login",
+ *     summary="ورود به حساب کاربری با ایمیل یا نام کاربری",
+ *     tags={"Auth"},
+ *     @OA\RequestBody(
+ *         required=true,
+ *         @OA\JsonContent(
+ *             required={"login", "password"},
+ *             @OA\Property(property="login", type="string", example="testuser یا test@example.com"),
+ *             @OA\Property(property="password", type="string", format="password", example="12345678")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="ورود موفق",
+ *         @OA\JsonContent(
+ *             @OA\Property(property="success", type="string", example="ورود به حساب با موفقیت انجام شد."),
+ *             @OA\Property(property="Token", type="string", example="X8s9dk3l91kdfhTgH9aKaPd0zL")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=422,
+ *         description="خطای اعتبارسنجی",
+ *         @OA\JsonContent(
+ *             @OA\Property(property="errors", type="object")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=442,
+ *         description="کاربر پیدا نشد یا رمز اشتباه است",
+ *         @OA\JsonContent(
+ *             @OA\Property(property="status", type="string", example="Eror"),
+ *             @OA\Property(property="message", type="string", example="کاربر مورد نظر یافت نشد.")
+ *         )
+ *     )
+ * )
+ */
+
+
+
 
     public function login(Request $request)
     {

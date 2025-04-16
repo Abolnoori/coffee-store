@@ -1,12 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <script src="https://unpkg.com/swagger-ui-dist/swagger-ui-bundle.js"></script>
+<script src="https://unpkg.com/swagger-ui-dist/swagger-ui-standalone-preset.js"></script>
     <meta charset="UTF-8">
-    <title>{{config('l5-swagger.documentations.'.$documentation.'.api.title')}}</title>
+    <title>{{ $documentationTitle }}</title>
     <link rel="stylesheet" type="text/css" href="{{ l5_swagger_asset($documentation, 'swagger-ui.css') }}">
     <link rel="icon" type="image/png" href="{{ l5_swagger_asset($documentation, 'favicon-32x32.png') }}" sizes="32x32"/>
     <link rel="icon" type="image/png" href="{{ l5_swagger_asset($documentation, 'favicon-16x16.png') }}" sizes="16x16"/>
+    <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist/swagger-ui.css" />
+
     <style>
+        
     html
     {
         box-sizing: border-box;
@@ -109,6 +114,9 @@
             #dark-mode svg:not(:root){
                 fill: #e7e7e7;
             }
+            #dark-mode .opblock-summary-description {
+                color: #fafafa;
+            }
         </style>
     @endif
 </head>
@@ -120,10 +128,17 @@
 <script src="{{ l5_swagger_asset($documentation, 'swagger-ui-standalone-preset.js') }}"></script>
 <script>
     window.onload = function() {
+        const urls = [];
+
+        @foreach($urlsToDocs as $title => $url)
+            urls.push({name: "{{ $title }}", url: "{{ $url }}"});
+        @endforeach
+
         // Build a system
         const ui = SwaggerUIBundle({
             dom_id: '#swagger-ui',
-            url: "{!! $urlToDocs !!}",
+            urls: urls,
+            "urls.primaryName": "{{ $documentationTitle }}",
             operationsSorter: {!! isset($operationsSorter) ? '"' . $operationsSorter . '"' : 'null' !!},
             configUrl: {!! isset($configUrl) ? '"' . $configUrl . '"' : 'null' !!},
             validatorUrl: {!! isset($validatorUrl) ? '"' . $validatorUrl . '"' : 'null' !!},
